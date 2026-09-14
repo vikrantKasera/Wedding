@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+  window.scrollTo(0, 0);
+
   // Customize the date in one place. ISO format: YYYY-MM-DDTHH:MM:SS+05:30
   const WEDDING_DATE = "2027-02-23T18:00:00+05:30";
 
@@ -132,26 +137,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
   // Optional music. Browsers generally require a user gesture.
-  musicBtn.addEventListener("click", async () => {
+  const updateMusicButton = (isPlaying) => {
+    musicBtn.classList.toggle("playing", isPlaying);
+    musicBtn.innerHTML = isPlaying
+      ? '<i class="bi bi-pause-fill"></i>'
+      : '<i class="bi bi-music-note"></i>';
+    musicBtn.setAttribute("aria-label", isPlaying ? "Pause wedding music" : "Play wedding music");
+    musicBtn.title = isPlaying ? "Pause wedding music" : "Play wedding music";
+  };
+
+  const startMusic = async () => {
     try {
       if (music.paused) {
         await music.play();
-        musicBtn.classList.add("playing");
-        musicBtn.innerHTML = '<i class="bi bi-pause-fill"></i>';
-        musicBtn.setAttribute("aria-label", "Pause wedding music");
+      }
+      updateMusicButton(!music.paused);
+      musicBtn.title = "Pause wedding music";
+    } catch {
+      updateMusicButton(false);
+      musicBtn.title = "Tap the music icon to enable audio playback on this device.";
+    }
+  };
+
+  const stopMusic = () => {
+    music.pause();
+    updateMusicButton(false);
+    musicBtn.title = "Play wedding music";
+  };
+
+  const weddingDetailsBtn = document.querySelector('a[href="#countdown"]');
+  weddingDetailsBtn?.addEventListener("click", async () => {
+    await startMusic();
+  });
+
+  musicBtn.addEventListener("click", async () => {
+    try {
+      if (music.paused) {
+        await startMusic();
       } else {
-        music.pause();
-        musicBtn.classList.remove("playing");
-        musicBtn.innerHTML = '<i class="bi bi-music-note"></i>';
-        musicBtn.setAttribute("aria-label", "Play wedding music");
+        stopMusic();
       }
     } catch {
-      musicBtn.title = "Add your wedding-song.mp3 file, then tap again.";
+      musicBtn.title = "Tap the music icon to enable audio playback on this device.";
     }
   });
 
-  document.onload = () => {
-    console.log("document.onload");
-    musicBtn.click();
-  }
 });
