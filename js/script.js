@@ -52,16 +52,22 @@ document.addEventListener("DOMContentLoaded", () => {
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // Lightweight falling petals.
+  // Falling cherry blossoms.
   const petals = document.getElementById("petals");
-  const petalCount = window.matchMedia("(max-width: 600px)").matches ? 9 : 16;
+  const petalCount = window.matchMedia("(max-width: 600px)").matches ? 28 : 52;
   for (let i = 0; i < petalCount; i++) {
     const p = document.createElement("span");
+    const size = 7 + Math.random() * 11;
+
     p.className = "petal";
     p.style.left = `${Math.random() * 100}%`;
-    p.style.animationDelay = `${Math.random() * 8}s`;
-    p.style.animationDuration = `${7 + Math.random() * 7}s`;
-    p.style.setProperty("--drift", `${-70 + Math.random() * 140}px`);
+    p.style.width = `${size}px`;
+    p.style.height = `${size * 1.45}px`;
+    p.style.opacity = `${0.45 + Math.random() * 0.55}`;
+    p.style.animationDelay = `${Math.random() * 10}s`;
+    p.style.animationDuration = `${9 + Math.random() * 11}s`;
+    p.style.filter = `blur(${Math.random() < 0.5 ? 0 : 0.25}px)`;
+    p.style.setProperty("--drift", `${-120 + Math.random() * 240}px`);
     petals.appendChild(p);
   }
 
